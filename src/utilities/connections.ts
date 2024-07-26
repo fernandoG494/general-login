@@ -2,7 +2,6 @@ import { LoginUserData } from "../interfaces/LoginInterfaces";
 
 export const login = async (values: LoginUserData) => {
   // [IMPORTANT]: Adjust the user login endpoint to you API
-  console.log(import.meta.env.VITE_API_URL + "/user/login", values);
   try {
     const response = await fetch(
       `${import.meta.env.VITE_API_URL + "/user/login"}`,

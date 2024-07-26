@@ -2,7 +2,9 @@ import * as Yup from "yup";
 import { useState } from "react";
 import { useFormik } from "formik";
 import { TextField } from "@mui/material";
+import { useDispatch } from "react-redux";
 import LoadingButton from "@mui/lab/LoadingButton";
+import { setUser } from "../store/slices/userSlice";
 
 import { login } from "../utilities/connections";
 
@@ -10,6 +12,8 @@ import "../styles/components/LoginForm.scss";
 
 const LoginForm = () => {
   const [loginStatus, setLoginStatus] = useState("");
+
+  const dispatch = useDispatch();
 
   const { errors, getFieldProps, handleSubmit, touched } = useFormik({
     initialValues: {
@@ -28,11 +32,11 @@ const LoginForm = () => {
     onSubmit: async (values) => {
       setLoginStatus("unresolved");
       const result = await login(values);
-      console.log(result);
 
       if (result.status == "success") {
         // [IMPORTANT]: timeout just to visualize button behavior
-        setTimeout(() => setLoginStatus(result.status), 1200);
+        setTimeout(() => setLoginStatus(result.status), 1000);
+        dispatch(setUser(result));
       } else {
         setLoginStatus("error");
       }
