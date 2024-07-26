@@ -14,12 +14,12 @@ export const login = async (values: LoginUserData) => {
       }
     );
 
-    if (!response.ok) {
-      throw new Error("Error getting the user");
+    if (response.ok) {
+      const data = await response.json();
+      return data;
+    } else {
+      return await response.json();
     }
-
-    const data = await response.json();
-    return data;
   } catch (error) {
     console.log(error);
     throw new Error("Error getting the user");

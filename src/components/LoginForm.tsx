@@ -10,6 +10,8 @@ import { login } from "../utilities/connections";
 
 import "../styles/components/LoginForm.scss";
 
+import { Bounce, toast, ToastContainer } from "react-toastify";
+
 const LoginForm = () => {
   const [loginStatus, setLoginStatus] = useState("");
 
@@ -32,53 +34,81 @@ const LoginForm = () => {
     onSubmit: async (values) => {
       setLoginStatus("unresolved");
       const result = await login(values);
+      console.log(result);
 
       if (result.status == "success") {
         // [IMPORTANT]: timeout just to visualize button behavior
         setTimeout(() => setLoginStatus(result.status), 1000);
         dispatch(setUser(result));
+        toast.success("Welcome back!", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Bounce,
+        });
       } else {
         setLoginStatus("error");
+        toast.error("Something gone wrong", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Bounce,
+        });
       }
     },
   });
 
   return (
-    <form noValidate onSubmit={handleSubmit}>
-      <div className="login-container">
-        <TextField
-          id="standard-basic"
-          label="Email"
-          variant="standard"
-          size="small"
-          type="email"
-          error={errors.email ? true : false}
-          {...getFieldProps("email")}
-        />
-        {touched.email && errors.email && <span>{errors.email}</span>}
+    <div>
+      <ToastContainer />
+      <form noValidate onSubmit={handleSubmit}>
+        <div className="login-container">
+          <TextField
+            id="standard-basic"
+            label="Email"
+            variant="standard"
+            size="small"
+            type="email"
+            error={errors.email ? true : false}
+            {...getFieldProps("email")}
+          />
+          {touched.email && errors.email && <span>{errors.email}</span>}
 
-        <TextField
-          id="standard-basic"
-          label="Password"
-          variant="standard"
-          type="password"
-          size="small"
-          error={errors.password ? true : false}
-          {...getFieldProps("password")}
-        />
-        {touched.password && errors.password && <span>{errors.password}</span>}
+          <TextField
+            id="standard-basic"
+            label="Password"
+            variant="standard"
+            type="password"
+            size="small"
+            error={errors.password ? true : false}
+            {...getFieldProps("password")}
+          />
+          {touched.password && errors.password && (
+            <span>{errors.password}</span>
+          )}
 
-        <LoadingButton
-          loading={loginStatus == "unresolved" ? true : false}
-          type="submit"
-          variant="contained"
-          size="small"
-          fullWidth
-        >
-          <span>Submit</span>
-        </LoadingButton>
-      </div>
-    </form>
+          <LoadingButton
+            loading={loginStatus == "unresolved" ? true : false}
+            type="submit"
+            variant="contained"
+            size="small"
+            fullWidth
+          >
+            <span>Submit</span>
+          </LoadingButton>
+        </div>
+      </form>
+    </div>
   );
 };
 
