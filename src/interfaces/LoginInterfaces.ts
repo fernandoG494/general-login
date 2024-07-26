@@ -3,3 +3,8 @@ export interface TabPanelProps {
   index: number;
   value: number;
 }
+
+export interface LoginUserData {
+  email: string;
+  password: string;
+}
