@@ -1,11 +1,16 @@
 import * as Yup from "yup";
+import { useState } from "react";
 import { useFormik } from "formik";
-import { Button, TextField } from "@mui/material";
+import { TextField } from "@mui/material";
+import LoadingButton from "@mui/lab/LoadingButton";
 
-import "../styles/components/LoginForm.scss";
 import { login } from "../utilities/connections";
 
+import "../styles/components/LoginForm.scss";
+
 const LoginForm = () => {
+  const [loginStatus, setLoginStatus] = useState("");
+
   const { errors, getFieldProps, handleSubmit, touched } = useFormik({
     initialValues: {
       email: "",
@@ -20,8 +25,17 @@ const LoginForm = () => {
         .min(8, "Should be 8 chars minimum.")
         .matches(/[a-zA-Z]/, "Password can only contain Latin letters."),
     }),
-    onSubmit: (values) => {
-      login(values);
+    onSubmit: async (values) => {
+      setLoginStatus("unresolved");
+      const result = await login(values);
+      console.log(result);
+
+      if (result.status == "success") {
+        // [IMPORTANT]: timeout just to visualize button behavior
+        setTimeout(() => setLoginStatus(result.status), 1200);
+      } else {
+        setLoginStatus("error");
+      }
     },
   });
 
@@ -50,9 +64,15 @@ const LoginForm = () => {
         />
         {touched.password && errors.password && <span>{errors.password}</span>}
 
-        <Button type="submit" variant="contained" size="small" fullWidth>
-          Submit
-        </Button>
+        <LoadingButton
+          loading={loginStatus == "unresolved" ? true : false}
+          type="submit"
+          variant="contained"
+          size="small"
+          fullWidth
+        >
+          <span>Submit</span>
+        </LoadingButton>
       </div>
     </form>
   );
